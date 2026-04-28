@@ -12,27 +12,41 @@ import sessionRoutes from "./routes/sessionRoute.js";
 
 const app = express();
 
-// middleware
+// ✅ middleware
 app.use(express.json());
-app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
 
+app.use(
+  cors({
+    origin: ENV.CLIENT_URL, // must match your Vercel URL
+    credentials: true,
+  })
+);
+
+// ✅ Clerk middleware
 app.use(clerkMiddleware());
 
-// routes
-app.use("/api/inngest", serve({ client: inngest, functions }));
-app.use("/api/chat", chatRoutes);
-app.use("/api/sessions", sessionRoutes);
+// ✅ Test route (so "/" doesn’t show error)
+app.get("/", (req, res) => {
+  res.send("Backend is running 🚀");
+});
 
+// ✅ Health check
 app.get("/health", (req, res) => {
   res.status(200).json({ msg: "api is up and running" });
 });
 
+// ✅ routes
+app.use("/api/inngest", serve({ client: inngest, functions }));
+app.use("/api/chat", chatRoutes);
+app.use("/api/sessions", sessionRoutes);
+
+// ✅ start server
 const startServer = async () => {
   try {
     await connectDB();
-    app.listen(ENV.PORT, () =>
-      console.log("Server is running on port:", ENV.PORT)
-    );
+    app.listen(ENV.PORT, () => {
+      console.log(`Server is running on port: ${ENV.PORT}`);
+    });
   } catch (error) {
     console.error("💥 Error starting the server", error);
   }
