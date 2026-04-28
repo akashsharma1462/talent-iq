@@ -17,7 +17,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: ENV.CLIENT_URL, // must match your Vercel URL
+    origin: ["https://talent-iq-pi-kohl.vercel.app"],
     credentials: true,
   })
 );
