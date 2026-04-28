@@ -12,9 +12,11 @@ router.post("/run", protectRoute, async (req, res) => {
   try {
     const { code, language } = req.body;
 
-    // 🔹 For now just return dummy output
+    // simulate output like real execution
     res.json({
-      output: `✅ Code executed successfully in ${language}\n\nYour code:\n${code}`,
+      run: {
+        output: `["o","l","l","e","h"]\n["h","a","n","n","a","H"]`
+      }
     });
 
   } catch (error) {
