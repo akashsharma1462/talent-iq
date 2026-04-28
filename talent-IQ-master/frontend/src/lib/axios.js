@@ -1,19 +1,20 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL + "/api", // ✅ IMPORTANT FIX
+  baseURL: import.meta.env.VITE_API_URL + "/api", // ✅ IMPORTANT
   withCredentials: true,
 });
 
-// ✅ attach Clerk token to every request (FIXED)
+// ✅ Attach Clerk token to every request
 axiosInstance.interceptors.request.use(
   async (config) => {
     try {
-      // ✅ Correct way (works in production)
-      const token = await window.Clerk?.session?.getToken();
+      if (window.Clerk && window.Clerk.session) {
+        const token = await window.Clerk.session.getToken();
 
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
       }
     } catch (error) {
       console.error("Error attaching token:", error);

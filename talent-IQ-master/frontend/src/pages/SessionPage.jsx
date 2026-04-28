@@ -1,9 +1,9 @@
+import axiosInstance from "../lib/axios";
 import { useUser } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useEndSession, useJoinSession, useSessionById } from "../hooks/useSessions";
 import { PROBLEMS } from "../data/problems";
-import { executeCode } from "../lib/piston";
 import Navbar from "../components/Navbar";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { getDifficultyBadgeClass } from "../lib/utils";
@@ -80,12 +80,22 @@ function SessionPage() {
   };
 
   const handleRunCode = async () => {
-    setIsRunning(true);
-    setOutput(null);
+    try {
+      setIsRunning(true);
+      setOutput(null);
 
-    const result = await executeCode(selectedLanguage, code);
-    setOutput(result);
-    setIsRunning(false);
+      const res = await axiosInstance.post("/chat/run", {
+        code,
+        language: selectedLanguage,
+      });
+
+      setOutput(res.data.output);
+    } catch (error) {
+      console.error(error);
+      setOutput("Error running code");
+    } finally {
+      setIsRunning(false);
+    }
   };
 
   const handleEndSession = () => {
